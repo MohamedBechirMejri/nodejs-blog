@@ -34,6 +34,10 @@ const articleSchema = new Schema(
       ref: "User",
       required: true,
     },
+    isPublished: {
+      type: Boolean,
+      default: false,
+    },
     likes: [
       {
         type: Schema.Types.ObjectId,
