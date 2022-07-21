@@ -54,4 +54,12 @@ const articleSchema = new Schema(
   { timestamps: true }
 );
 
+articleSchema.virtual("likeCount").get(function () {
+  return this.likes.length;
+});
+
+articleSchema.virtual("url").get(function () {
+  return `/articles/${this._id}`;
+});
+
 module.exports = model("Article", articleSchema);
