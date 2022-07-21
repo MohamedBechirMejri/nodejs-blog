@@ -6,7 +6,9 @@ const Category = require("../models/Category");
 const User = require("../models/User");
 
 exports.index = (req, res, next) => {
-  Article.find()
+  Article.find({
+    isPublished: true,
+  })
     .populate("author category")
     .exec((err, items) => {
       if (err) return next(err);
