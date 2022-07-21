@@ -4,7 +4,7 @@ const router = express.Router();
 
 const {
   index,
-  //   read,
+  show,
   //   createGet,
   //   createPost,
   //   updateGet,
@@ -19,7 +19,7 @@ router.get("/", index);
 
 // router.post("/create", createPost);
 
-// router.get("/:id", read);
+router.get("/:id", show);
 
 // router.get("/:id/edit", updateGet);
 
