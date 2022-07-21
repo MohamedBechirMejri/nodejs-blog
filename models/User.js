@@ -40,12 +40,6 @@ const userSchema = new Schema(
         ref: "Article",
       },
     ],
-    articles: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Article",
-      },
-    ],
   },
   { timestamps: true }
 );
