@@ -2,13 +2,31 @@
   "name": "nodejs-blog",
   "version": "0.0.0",
   "private": true,
+  "engines": {
+    "node": "16.15.1"
+  },
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "devstart": "nodemon ./bin/www",
+    "serverstart": "DEBUG=express-locallibrary:* npm run devstart"
   },
   "dependencies": {
-    "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
-    "express": "~4.16.1",
-    "morgan": "~1.9.1"
+    "async": "^3.2.4",
+    "compression": "^1.7.4",
+    "cookie-parser": "~1.4.6",
+    "debug": "~4.3.4",
+    "dotenv": "^16.0.1",
+    "express": "~4.18.1",
+    "express-validator": "^6.14.2",
+    "helmet": "^5.1.0",
+    "http-errors": "~2.0.0",
+    "mongoose": "^6.4.6",
+    "morgan": "~1.10.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.20.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0"
   }
 }
