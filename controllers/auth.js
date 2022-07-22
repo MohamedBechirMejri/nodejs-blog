@@ -69,7 +69,7 @@ exports.signup = [
           });
           user.save(err => {
             if (err) return next(err);
-            res.redirect("/");
+            res.json("User Created Successfully");
           });
         });
     }
