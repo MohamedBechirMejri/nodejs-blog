@@ -31,29 +31,20 @@ exports.create = [
   body("title")
     .isLength({ min: 5 })
     .trim()
-    .withMessage("Title must be at least 5 characters")
-    .escape(),
+    .withMessage("Title must be at least 5 characters"),
   body("body")
     .isLength({ min: 25 })
     .trim()
-    .withMessage("Body must be at least 25 characters")
-    .escape(),
+    .withMessage("Body must be at least 25 characters"),
   body("category")
     .isLength({ min: 1 })
     .trim()
-    .withMessage("Category must be selected")
-    .escape(),
+    .withMessage("Category must be selected"),
   body("author")
     .isLength({ min: 1 })
     .trim()
-    .withMessage("Author must be selected")
-    .escape(),
-  body("image")
-    .isLength({ min: 1 })
-    .trim()
-    .withMessage("Image link missing!")
-    .escape(),
-
+    .withMessage("Author must be selected"),
+  body("image").isLength({ min: 1 }).trim().withMessage("Image link missing!"),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -74,5 +65,43 @@ exports.create = [
       if (err) return next(err);
       res.json(item);
     });
+  },
+];
+
+exports.update = [
+  body("title")
+    .isLength({ min: 5 })
+    .trim()
+    .withMessage("Title must be at least 5 characters"),
+  body("body")
+    .isLength({ min: 25 })
+    .trim()
+    .withMessage("Body must be at least 25 characters"),
+  body("category")
+    .isLength({ min: 1 })
+    .trim()
+    .withMessage("Category must be selected"),
+  body("image").isLength({ min: 1 }).trim().withMessage("Image link missing!"),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+
+    const { title, body, image, category } = req.body;
+
+    Article.findByIdAndUpdate(
+      req.params.id,
+      {
+        title,
+        body,
+        image,
+        category,
+      },
+      (err, item) => {
+        if (err) return next(err);
+        res.json(item);
+      }
+    );
   },
 ];

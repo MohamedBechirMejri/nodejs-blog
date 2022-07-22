@@ -6,7 +6,7 @@ const {
   index,
   show,
   create,
-  //   update,
+  update,
   //   deletePost,
 } = require("../controllers/article");
 
@@ -16,7 +16,7 @@ router.post("/", create);
 
 router.get("/:id", show);
 
-// router.post("/:id/edit", update);
+router.put("/:id", update);
 
 // router.post("/:id/delete", delete);
 
