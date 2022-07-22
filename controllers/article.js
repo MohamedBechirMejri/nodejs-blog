@@ -1,6 +1,7 @@
 /* eslint-disable no-shadow */
 /* eslint-disable consistent-return */
 const { validationResult, body } = require("express-validator");
+const jwt = require("jsonwebtoken");
 
 const Article = require("../models/Article");
 
@@ -43,7 +44,13 @@ exports.create = [
     .trim()
     .withMessage("Author must be selected"),
   body("image").isLength({ min: 1 }).trim().withMessage("Image link missing!"),
+
   (req, res, next) => {
+    jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
+      if (err) res.sendStatus(403);
+      console.log(authData);
+    });
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
@@ -81,6 +88,20 @@ exports.update = [
     .withMessage("Category must be selected"),
   body("image").isLength({ min: 1 }).trim().withMessage("Image link missing!"),
   (req, res, next) => {
+    jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
+      if (err) res.sendStatus(403);
+      console.log(authData);
+      const article = Article.findById(req.params.id);
+
+      if (
+        article.author !== authData.user._id &&
+        authData.user.role !== "admin"
+      ) {
+        return res
+          .status(403)
+          .json({ message: "You are not authorized to do this!" });
+      }
+    });
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
@@ -105,6 +126,20 @@ exports.update = [
 ];
 
 exports.deleteArticle = (req, res, next) => {
+  jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
+    if (err) res.sendStatus(403);
+    console.log(authData);
+    const article = Article.findById(req.params.id);
+
+    if (
+      article.author !== authData.user._id &&
+      authData.user.role !== "admin"
+    ) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to do this!" });
+    }
+  });
   Article.findByIdAndRemove(req.params.id, (err, item) => {
     if (err) return next(err);
     res.json(item);
