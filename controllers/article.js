@@ -4,6 +4,8 @@ const { validationResult, body } = require("express-validator");
 const jwt = require("jsonwebtoken");
 
 const Article = require("../models/Article");
+const User = require("../models/User");
+const Category = require("../models/Category");
 
 exports.index = (req, res, next) => {
   Article.find({
@@ -22,6 +24,22 @@ exports.show = (req, res, next) => {
     .populate("author", "firstName lastName picture")
     .exec((err, item) => {
       if (err) return next(err);
+      if (!item)
+        return res.status(404).json({
+          message: "Article not found",
+        });
+
+      if (!item.isPublished) {
+        if (
+          req.user &&
+          (item.author.id === req.user.id || req.user.role === "admin")
+        )
+          return res.json(item);
+        return res.status(403).json({
+          message:
+            "You are not authorized to view this! Article is not published",
+        });
+      }
       res.json(item);
     });
 };
