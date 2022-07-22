@@ -24,6 +24,19 @@ const userSchema = new Schema(
         },
       },
     },
+    password: {
+      type: String,
+      required: true,
+      minlength: 6,
+      maxlength: 255,
+      validate: {
+        validator(v) {
+          return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}/.test(
+            v
+          );
+        },
+      },
+    },
     picture: {
       type: String,
       required: true,
