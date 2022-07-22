@@ -1,4 +1,4 @@
-exports.verifyToken = (req, res, next) => {
+const verifyToken = (req, res, next) => {
   const bearerHeader = req.headers.authorization;
   if (typeof bearerHeader !== "undefined") {
     const bearer = bearerHeader.split(" ");
@@ -9,3 +9,4 @@ exports.verifyToken = (req, res, next) => {
     res.sendStatus(403);
   }
 };
+module.exports = verifyToken;
