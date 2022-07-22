@@ -107,7 +107,13 @@ exports.login = [
                     res.json({
                       message: "Logged in",
                       token,
-                      user,
+                      user: {
+                        id: user._id,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        picture: user.picture,
+                        bookmarks: user.bookmarks,
+                      },
                     });
                   }
                 );
