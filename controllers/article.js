@@ -31,8 +31,9 @@ exports.show = (req, res, next) => {
 
       if (!item.isPublished) {
         if (
-          req.user &&
-          (item.author.id === req.user.id || req.user.role === "admin")
+          req.body.user &&
+          (item.author.id === req.body.user._id ||
+            req.body.user.role === "admin")
         )
           return res.json(item);
         return res.status(403).json({
@@ -65,7 +66,7 @@ exports.create = [
 
   (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
-      if (err) res.sendStatus(403);
+      if (err) res.status(403).json({ message: err });
       console.log(authData);
     });
 
