@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 /* eslint-disable consistent-return */
 const { validationResult, sanitizeBody, body } = require("express-validator");
 
@@ -25,3 +26,53 @@ exports.show = (req, res, next) => {
       res.json(item);
     });
 };
+
+exports.create = [
+  body("title")
+    .isLength({ min: 5 })
+    .trim()
+    .withMessage("Title must be at least 5 characters")
+    .escape(),
+  body("body")
+    .isLength({ min: 25 })
+    .trim()
+    .withMessage("Body must be at least 25 characters")
+    .escape(),
+  body("category")
+    .isLength({ min: 1 })
+    .trim()
+    .withMessage("Category must be selected")
+    .escape(),
+  body("author")
+    .isLength({ min: 1 })
+    .trim()
+    .withMessage("Author must be selected")
+    .escape(),
+  body("image")
+    .isLength({ min: 1 })
+    .trim()
+    .withMessage("Image link missing!")
+    .escape(),
+
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+
+    const { title, body, image, category, author } = req.body;
+
+    const article = new Article({
+      title,
+      body,
+      image,
+      category,
+      author,
+    });
+
+    article.save((err, item) => {
+      if (err) return next(err);
+      res.json(item);
+    });
+  },
+];
