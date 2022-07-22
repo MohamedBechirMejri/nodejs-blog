@@ -98,7 +98,6 @@ exports.login = [
             bcrypt.compare(password, user.password, (err, isMatch) => {
               if (err) return next(err);
               if (isMatch) {
-                req.session.user = user;
                 jwt.sign(
                   { user },
                   process.env.JWT_SECRET,
