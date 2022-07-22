@@ -113,6 +113,7 @@ exports.login = [
                         lastName: user.lastName,
                         picture: user.picture,
                         bookmarks: user.bookmarks,
+                        role: user.role,
                       },
                     });
                   }
