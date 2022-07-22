@@ -6,7 +6,7 @@ const verifyToken = (req, res, next) => {
     req.token = bearerToken;
     next();
   } else {
-    res.sendStatus(403);
+    res.status(403).json({ message: "unauthorized" });
   }
 };
 module.exports = verifyToken;
