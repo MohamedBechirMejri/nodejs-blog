@@ -105,3 +105,10 @@ exports.update = [
     );
   },
 ];
+
+exports.deleteArticle = (req, res, next) => {
+  Article.findByIdAndRemove(req.params.id, (err, item) => {
+    if (err) return next(err);
+    res.json(item);
+  });
+};
