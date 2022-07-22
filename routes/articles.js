@@ -9,15 +9,16 @@ const {
   update,
   deleteArticle,
 } = require("../controllers/article");
+const verifyToken = require("../Middlewares/Auth/verifyToken");
 
 router.get("/", index);
 
-router.post("/", create);
+router.post("/", verifyToken, create);
 
 router.get("/:id", show);
 
-router.put("/:id", update);
+router.put("/:id", verifyToken, update);
 
-router.delete("/:id", deleteArticle);
+router.delete("/:id", verifyToken, deleteArticle);
 
 module.exports = router;
