@@ -107,6 +107,7 @@ exports.login = [
                     res.json({
                       message: "Logged in",
                       token,
+                      user,
                     });
                   }
                 );
