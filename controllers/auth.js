@@ -2,6 +2,7 @@
 /* eslint-disable consistent-return */
 const { validationResult, body } = require("express-validator");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const User = require("../models/User");
 
@@ -71,6 +72,54 @@ exports.signup = [
             res.redirect("/");
           });
         });
+    }
+  },
+];
+
+exports.login = [
+  body("email").isEmail().withMessage("Email is required").trim().escape(),
+  body("password")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters")
+    .trim()
+    .escape(),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) res.json(errors.array());
+    else {
+      const { email, password } = req.body;
+      User.findOne({ email })
+        .then(user => {
+          if (!user) {
+            res.json({
+              message: "Email not found",
+            });
+          } else {
+            bcrypt.compare(password, user.password, (err, isMatch) => {
+              if (err) return next(err);
+              if (isMatch) {
+                req.session.user = user;
+                jwt.sign(
+                  { user },
+                  process.env.JWT_SECRET,
+                  { expiresIn: "15d" },
+                  (err, token) => {
+                    if (err) return next(err);
+                    res.json({
+                      message: "Logged in",
+                      token,
+                    });
+                  }
+                );
+              } else {
+                res.json({
+                  message: "Incorrect password",
+                });
+              }
+            });
+          }
+        })
+        .catch(err => next(err));
     }
   },
 ];
