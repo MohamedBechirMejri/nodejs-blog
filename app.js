@@ -12,7 +12,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
-// const session = require("express-session");
+const session = require("express-session");
 const compression = require("compression");
 const helmet = require("helmet");
 const createError = require("http-errors");
@@ -28,7 +28,7 @@ const app = express();
 app.use(helmet());
 app.use(compression());
 
-// app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
+app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
