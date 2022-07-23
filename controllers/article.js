@@ -165,3 +165,22 @@ exports.deleteArticle = (req, res, next) => {
     res.json(item);
   });
 };
+
+exports.like = (req, res, next) => {
+  jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
+    if (err) res.sendStatus(403);
+
+    const article = Article.findById(req.params.id);
+
+    if (article.likes.includes(authData.user._id)) {
+      article.likes.filter(id => id !== authData.user._id);
+    } else {
+      article.likes.push(authData.user._id);
+    }
+
+    article.save((err, item) => {
+      if (err) return next(err);
+      res.json(item);
+    });
+  });
+};
