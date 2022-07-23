@@ -19,6 +19,10 @@ exports.index = (req, res, next) => {
 };
 
 exports.show = (req, res, next) => {
+  jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
+    if (err) res.status(403).json({ message: err });
+    req.user = authData.user;
+  });
   Article.findById(req.params.id)
     .populate("category")
     .populate("author", "firstName lastName picture")
@@ -30,11 +34,7 @@ exports.show = (req, res, next) => {
         });
 
       if (!item.isPublished) {
-        if (
-          req.body.user &&
-          (item.author.id === req.body.user._id ||
-            req.body.user.role === "admin")
-        )
+        if (item.author.id === req.user._id || req.user.role === "admin")
           return res.json(item);
         return res.status(403).json({
           message:
