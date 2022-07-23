@@ -184,3 +184,25 @@ exports.like = (req, res, next) => {
     });
   });
 };
+
+exports.publish = (req, res, next) => {
+  jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
+    if (err) res.sendStatus(403);
+
+    const article = Article.findById(req.params.id);
+
+    if (
+      article.author !== authData.user._id &&
+      authData.user.role !== "admin"
+    ) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to do this!" });
+    }
+    article.isPublished = !article.isPublished;
+    article.save((err, item) => {
+      if (err) return next(err);
+      res.json(item);
+    });
+  });
+};

@@ -12,7 +12,7 @@ const {
   // unlike,
   comment,
   // deleteComment,
-  // publish,
+  publish,
   // unpublish,
   bookmark,
   // unbookmark,
@@ -35,5 +35,7 @@ router.post("/:id/like", verifyToken, like);
 router.post("/:id/bookmark", verifyToken, bookmark);
 
 router.post("/:id/comment", verifyToken, comment);
+
+router.post("/:id/publish", verifyToken, publish);
 
 module.exports = router;
