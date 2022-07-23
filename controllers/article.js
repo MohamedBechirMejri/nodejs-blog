@@ -67,7 +67,6 @@ exports.create = [
   (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
       if (err) res.status(403).json({ message: err });
-      console.log(authData);
     });
 
     const errors = validationResult(req);
@@ -110,7 +109,7 @@ exports.update = [
   (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
       if (err) res.sendStatus(403);
-      console.log(authData);
+
       const article = Article.findById(req.params.id);
 
       if (
@@ -149,7 +148,7 @@ exports.update = [
 exports.deleteArticle = (req, res, next) => {
   jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
     if (err) res.sendStatus(403);
-    console.log(authData);
+
     const article = Article.findById(req.params.id);
 
     if (
