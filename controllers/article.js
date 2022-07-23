@@ -106,6 +106,7 @@ exports.update = [
     .trim()
     .withMessage("Category must be selected"),
   body("image").isLength({ min: 1 }).trim().withMessage("Image link missing!"),
+  body("isPublished").isBoolean().withMessage("isPublished must be a boolean"),
   (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
       if (err) res.sendStatus(403);
@@ -126,7 +127,7 @@ exports.update = [
       return res.status(422).json({ errors: errors.array() });
     }
 
-    const { title, body, image, category } = req.body;
+    const { title, body, image, category, isPublished } = req.body;
 
     Article.findByIdAndUpdate(
       req.params.id,
@@ -135,6 +136,7 @@ exports.update = [
         body,
         image,
         category,
+        isPublished,
       },
       (err, item) => {
         if (err) return next(err);
