@@ -206,3 +206,21 @@ exports.publish = (req, res, next) => {
     });
   });
 };
+
+exports.bookmark = (req, res, next) => {
+  jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
+    if (err) res.sendStatus(403);
+
+    const user = User.findById(authData.user._id);
+
+    if (user.bookmarks.includes(req.params.id)) {
+      user.bookmarks.filter(id => id !== req.params.id);
+    } else {
+      user.bookmarks.push(req.params.id);
+    }
+    user.save((err, item) => {
+      if (err) return next(err);
+      res.json("Bookmarks updated!");
+    });
+  });
+};
