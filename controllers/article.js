@@ -106,11 +106,10 @@ exports.update = [
     .withMessage("Category must be selected"),
   body("image").isLength({ min: 1 }).trim().withMessage("Image link missing!"),
   body("isPublished").isBoolean().withMessage("isPublished must be a boolean"),
-  (req, res, next) => {
+  async (req, res, next) => {
+    const article = await Article.findById(req.params.id);
     jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
       if (err) res.sendStatus(403);
-
-      const article = Article.findById(req.params.id);
 
       if (
         article.author !== authData.user._id &&
@@ -145,11 +144,10 @@ exports.update = [
   },
 ];
 
-exports.deleteArticle = (req, res, next) => {
+exports.deleteArticle = async (req, res, next) => {
+  const article = await Article.findById(req.params.id);
   jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
     if (err) res.sendStatus(403);
-
-    const article = Article.findById(req.params.id);
 
     if (
       article.author !== authData.user._id &&
@@ -182,20 +180,18 @@ exports.like = async (req, res, next) => {
   });
 };
 
-exports.publish = (req, res, next) => {
+exports.publish = async (req, res, next) => {
+  const article = await Article.findById(req.params.id);
   jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
     if (err) res.sendStatus(403);
 
-    const article = Article.findById(req.params.id);
-
     if (
-      article.author !== authData.user._id &&
+      article.author.toString() !== authData.user._id.toString() &&
       authData.user.role !== "admin"
-    ) {
-      return res
-        .status(403)
-        .json({ message: "You are not authorized to do this!" });
-    }
+    )
+      return res.status(403).json({
+        message: "You are not authorized to do this!",
+      });
     article.isPublished = !article.isPublished;
     article.save((err, item) => {
       if (err) return next(err);
@@ -204,29 +200,26 @@ exports.publish = (req, res, next) => {
   });
 };
 
-exports.bookmark = (req, res, next) => {
+exports.bookmark = async (req, res, next) => {
   jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
     if (err) res.sendStatus(403);
 
-    const user = User.findById(authData.user._id);
-
-    if (user.bookmarks.includes(req.params.id)) {
-      user.bookmarks.filter(id => id !== req.params.id);
-    } else {
-      user.bookmarks.push(req.params.id);
-    }
-    user.save(err => {
-      if (err) return next(err);
-      res.json("Bookmarks updated!");
+    User.findById(authData.user._id).then(user => {
+      if (user.bookmarks.includes(req.params.id))
+        user.bookmarks.filter(id => id !== req.params.id);
+      else user.bookmarks.push(req.params.id);
+      user.save(err => {
+        if (err) return next(err);
+        res.json("Bookmarks updated!");
+      });
     });
   });
 };
 
-exports.comment = (req, res, next) => {
+exports.comment = async (req, res, next) => {
+  const article = await Article.findById(req.params.id);
   jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
     if (err) res.sendStatus(403);
-
-    const article = Article.findById(req.params.id);
 
     const comment = new Comment({
       body: req.body.body,
