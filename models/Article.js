@@ -63,9 +63,4 @@ articleSchema.virtual("url").get(function () {
   return `/articles/${this._id}`;
 });
 
-const Article = model("Article", articleSchema);
-
-module.exports = {
-  Article,
-  Comment: commentSchema,
-};
+module.exports = model("Article", articleSchema);
