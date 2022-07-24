@@ -3,7 +3,7 @@
 const { validationResult, body } = require("express-validator");
 const jwt = require("jsonwebtoken");
 
-const Article = require("../models/Article");
+const { Article, Comment } = require("../models/Article");
 const User = require("../models/User");
 const Category = require("../models/Category");
 
@@ -218,9 +218,28 @@ exports.bookmark = (req, res, next) => {
     } else {
       user.bookmarks.push(req.params.id);
     }
-    user.save((err, item) => {
+    user.save(err => {
       if (err) return next(err);
       res.json("Bookmarks updated!");
+    });
+  });
+};
+
+exports.comment = (req, res, next) => {
+  jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
+    if (err) res.sendStatus(403);
+
+    const article = Article.findById(req.params.id);
+
+    const comment = new Comment({
+      body: req.body.body,
+      user: authData.user._id,
+    });
+
+    article.comments.push(comment);
+    article.save((err, item) => {
+      if (err) return next(err);
+      res.json(item);
     });
   });
 };
