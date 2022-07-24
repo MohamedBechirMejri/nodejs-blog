@@ -4,7 +4,7 @@
 const { validationResult, body } = require("express-validator");
 const jwt = require("jsonwebtoken");
 
-const { Article, Comment } = require("../models/Article");
+const Article = require("../models/Article");
 const User = require("../models/User");
 const Category = require("../models/Category");
 
@@ -220,10 +220,10 @@ exports.comment = async (req, res, next) => {
   jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
     if (err) res.sendStatus(403);
 
-    const comment = new Comment({
+    const comment = {
       body: req.body.body,
       user: authData.user._id,
-    });
+    };
 
     article.comments.push(comment);
     article.save((err, item) => {
