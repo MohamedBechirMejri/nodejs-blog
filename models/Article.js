@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 const { Schema, model } = require("mongoose");
 
 const commentSchema = new Schema(
@@ -62,4 +63,9 @@ articleSchema.virtual("url").get(function () {
   return `/articles/${this._id}`;
 });
 
-module.exports = model("Article", articleSchema);
+const Article = model("Article", articleSchema);
+
+module.exports = {
+  Article,
+  Comment: commentSchema,
+};
