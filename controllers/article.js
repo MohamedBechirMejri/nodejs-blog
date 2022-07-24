@@ -145,17 +145,17 @@ exports.deleteArticle = async (req, res, next) => {
     if (err) res.sendStatus(403);
 
     if (
-      article.author !== authData.user._id &&
+      article.author.toString() !== authData.user._id.toString() &&
       authData.user.role !== "admin"
-    ) {
+    )
       return res
         .status(403)
         .json({ message: "You are not authorized to do this!" });
-    }
-  });
-  Article.findByIdAndRemove(req.params.id, (err, item) => {
-    if (err) return next(err);
-    res.json(item);
+
+    article.remove((err, item) => {
+      if (err) return next(err);
+      res.json("Deleted successfully");
+    });
   });
 };
 
