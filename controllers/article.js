@@ -106,42 +106,36 @@ exports.update = [
     .trim()
     .withMessage("Category must be selected"),
   body("image").isLength({ min: 1 }).trim().withMessage("Image link missing!"),
-  body("isPublished").isBoolean().withMessage("isPublished must be a boolean"),
-  async (req, res, next) => {
-    const article = await Article.findById(req.params.id);
+  (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
       if (err) res.sendStatus(403);
 
-      if (
-        article.author !== authData.user._id &&
-        authData.user.role !== "admin"
-      ) {
-        return res
-          .status(403)
-          .json({ message: "You are not authorized to do this!" });
-      }
+      const errors = validationResult(req);
+      if (!errors.isEmpty())
+        return res.status(422).json({ errors: errors.array() });
+
+      Article.findById(req.params.id).then(article => {
+        if (
+          article.author.toString() !== authData.user._id.toString() &&
+          authData.user.role !== "admin"
+        ) {
+          return res.status(403).json({
+            message: "You are not authorized to do this!",
+          });
+        }
+        const { title, body, image, category } = req.body;
+
+        article.title = title;
+        article.body = body;
+        article.image = image;
+        article.category = category;
+
+        article.save((err, item) => {
+          if (err) return next(err);
+          res.json(item);
+        });
+      });
     });
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
-    }
-
-    const { title, body, image, category, isPublished } = req.body;
-
-    Article.findByIdAndUpdate(
-      req.params.id,
-      {
-        title,
-        body,
-        image,
-        category,
-        isPublished,
-      },
-      (err, item) => {
-        if (err) return next(err);
-        res.json(item);
-      }
-    );
   },
 ];
 
