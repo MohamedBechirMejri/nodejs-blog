@@ -170,9 +170,11 @@ exports.like = async (req, res, next) => {
   jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
     if (err) res.sendStatus(403);
 
-    if (article.likes.includes(authData.user._id))
-      article.likes = article.likes.filter(id => id !== authData.user._id);
-    else article.likes.push(authData.user._id);
+    if (article.likes.includes(authData.user._id)) {
+      article.likes = article.likes.filter(
+        id => id.toString() !== authData.user._id.toString()
+      );
+    } else article.likes.push(authData.user._id);
 
     article.save((err, item) => {
       if (err) return next(err);
@@ -207,7 +209,9 @@ exports.bookmark = async (req, res, next) => {
 
     User.findById(authData.user._id).then(user => {
       if (user.bookmarks.includes(req.params.id))
-        user.bookmarks = user.bookmarks.filter(id => id !== req.params.id);
+        user.bookmarks = user.bookmarks.filter(
+          id => id.toString() !== req.params.id.toString()
+        );
       else user.bookmarks.push(req.params.id);
       user.save(err => {
         if (err) return next(err);
