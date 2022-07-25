@@ -12,7 +12,7 @@ exports.index = (req, res, next) => {
   Article.find({
     isPublished: true,
   })
-    .populate("category")
+    .populate("author", "firstName lastName picture")
     .exec((err, items) => {
       if (err) return next(err);
       res.json(items);
