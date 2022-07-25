@@ -11,6 +11,7 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+const cors = require("cors");
 
 const session = require("express-session");
 const compression = require("compression");
@@ -24,6 +25,8 @@ const articlesRouter = require("./routes/articles");
 const passport = require("./Middlewares/Auth/passport");
 
 const app = express();
+
+app.use(cors());
 
 app.use(helmet());
 app.use(compression());
