@@ -24,7 +24,7 @@ router.get("/", index);
 
 router.post("/", verifyToken, create);
 
-router.get("/:id", verifyToken, show);
+router.get("/:id", show);
 
 router.put("/:id", verifyToken, update);
 
