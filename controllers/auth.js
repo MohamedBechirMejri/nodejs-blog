@@ -52,7 +52,7 @@ exports.signup = [
     if (req.isAuthenticated()) res.json("Already logged in");
     else {
       const errors = validationResult(req);
-      if (!errors.isEmpty()) res.json(errors.array());
+      if (!errors.isEmpty()) res.status(422).json(errors.array());
       else
         bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
           if (err) return next(err);
