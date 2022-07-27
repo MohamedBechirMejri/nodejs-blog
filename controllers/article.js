@@ -236,13 +236,12 @@ exports.comment = async (req, res, next) => {
     article.comments.push(comment);
     article.save(err => {
       if (err) return next(err);
+      Article.findById(req.params.id)
+        .populate("author", "firstName lastName picture")
+        .populate("comments.user", "firstName lastName picture")
+        .then(article => {
+          res.json(article);
+        });
     });
-
-    Article.findById(req.params.id)
-      .populate("author", "firstName lastName picture")
-      .populate("comments.user", "firstName lastName picture")
-      .then(article => {
-        res.json(article);
-      });
   });
 };
