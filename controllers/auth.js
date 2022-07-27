@@ -91,8 +91,8 @@ exports.login = [
       User.findOne({ email })
         .then(user => {
           if (!user) {
-            res.json({
-              message: "Email not found",
+            res.status(404).json({
+              msg: "Email not found",
             });
           } else {
             bcrypt.compare(password, user.password, (err, isMatch) => {
@@ -119,8 +119,8 @@ exports.login = [
                   }
                 );
               } else {
-                res.json({
-                  message: "Incorrect password",
+                res.status(404).json({
+                  msg: "Incorrect password",
                 });
               }
             });
