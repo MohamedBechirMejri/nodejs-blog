@@ -107,6 +107,7 @@ exports.login = [
                     res.json({
                       message: "Logged in",
                       token,
+                      uid: user._id,
                       // user: {
                       //   id: user._id,
                       //   firstName: user.firstName,
