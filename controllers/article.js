@@ -205,16 +205,19 @@ exports.publish = async (req, res, next) => {
 exports.bookmark = async (req, res, next) => {
   jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
     if (err) res.sendStatus(403);
-
+    let isBookmarked = false;
     User.findById(authData.user._id).then(user => {
       if (user.bookmarks.includes(req.params.id))
         user.bookmarks = user.bookmarks.filter(
           id => id.toString() !== req.params.id.toString()
         );
-      else user.bookmarks.push(req.params.id);
+      else {
+        user.bookmarks.push(req.params.id);
+        isBookmarked = true;
+      }
       user.save(err => {
         if (err) return next(err);
-        res.json("Bookmarks updated!");
+        res.json(isBookmarked ? "Bookmark Added!" : "Bookmark Removed!");
       });
     });
   });
