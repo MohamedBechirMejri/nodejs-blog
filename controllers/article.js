@@ -23,6 +23,7 @@ exports.show = (req, res, next) => {
   Article.findById(req.params.id)
     .populate("category")
     .populate("author", "firstName lastName picture")
+    .populate("comments.user", "firstName lastName picture")
     .exec((err, item) => {
       if (err) return next(err);
       if (!item)
