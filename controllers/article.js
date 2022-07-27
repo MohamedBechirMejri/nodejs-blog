@@ -165,7 +165,7 @@ exports.deleteArticle = async (req, res, next) => {
 };
 
 exports.like = async (req, res, next) => {
-  const article = await Article.findById(req.params.id);
+  const article = await Article.findById(req.params.id).populate("author");
   jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
     if (err) res.sendStatus(403);
 
