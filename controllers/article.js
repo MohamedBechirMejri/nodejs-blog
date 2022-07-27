@@ -9,9 +9,15 @@ const User = require("../models/User");
 const Category = require("../models/Category");
 
 exports.index = (req, res, next) => {
-  Article.find({
-    isPublished: true,
-  })
+  const { title } = req.query;
+  Article.find(
+    title
+      ? {
+          isPublished: true,
+          title: { $regex: title, $options: "i" },
+        }
+      : { isPublished: true }
+  )
     .populate("author", "firstName lastName picture")
     .exec((err, items) => {
       if (err) return next(err);
