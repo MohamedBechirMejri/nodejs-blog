@@ -183,12 +183,11 @@ exports.like = async (req, res, next) => {
 };
 
 exports.publish = async (req, res, next) => {
-  const article = await Article.findById(req.params.id);
+  const article = await Article.findById(req.params.id).populate("author");
   jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
-    if (err) res.sendStatus(403);
-
+    if (err) res.status(403).json({ message: err });
     if (
-      article.author.toString() !== authData.user._id.toString() &&
+      article.author._id.toString() !== authData.user._id.toString() &&
       authData.user.role !== "admin"
     )
       return res.status(403).json({
