@@ -67,15 +67,12 @@ exports.create = [
     .isLength({ min: 1 })
     .trim()
     .withMessage("Category must be selected"),
-  body("author")
-    .isLength({ min: 1 })
-    .trim()
-    .withMessage("Author must be selected"),
   body("image").isLength({ min: 1 }).trim().withMessage("Image link missing!"),
 
   (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_SECRET, (err, authData) => {
       if (err) res.status(403).json({ message: err });
+      req.user = authData.user;
     });
 
     const errors = validationResult(req);
@@ -83,14 +80,14 @@ exports.create = [
       return res.status(422).json({ errors: errors.array() });
     }
 
-    const { title, body, image, category, author } = req.body;
+    const { title, body, image, category } = req.body;
 
     const article = new Article({
       title,
       body,
       image,
       category,
-      author,
+      author: req.user._id,
     });
 
     article.save((err, item) => {
